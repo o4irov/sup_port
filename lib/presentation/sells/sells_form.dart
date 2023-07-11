@@ -40,7 +40,7 @@ class _SellsFormState extends State<SellsForm> {
             price: 0,
           );
 
-    _isChanging = widget.sell == null;
+    _isChanging = widget.sell != null;
     if (_isChanging) {
       _service = widget.sell!.service;
       _quantity = widget.sell!.quantity;
@@ -85,6 +85,7 @@ class _SellsFormState extends State<SellsForm> {
                 borderRadius: BorderRadius.all(Radius.circular(10)),
               ),
               child: PopupMenuButton(
+                initialValue: _service.title,
                 itemBuilder: (context) {
                   return _services.map((e) => item(e.title)).toList();
                 },
@@ -159,11 +160,11 @@ class _SellsFormState extends State<SellsForm> {
                   onTap: () async {
                     if (_sumController.text != '') {
                       Sell sell = Sell(
-                        id: const Uuid().v4(),
+                        id: _isChanging ? widget.sell!.id : const Uuid().v4(),
                         service: _service,
                         quantity: _quantity,
-                        date: DateTime.now(),
-                        time: TimeOfDay.now(),
+                        date: _isChanging ? widget.sell!.date : DateTime.now(),
+                        time: _isChanging ? widget.sell!.time : TimeOfDay.now(),
                       );
                       await _sellsManager.addSell(sell: sell);
                       Navigator.pop(context, sell);

@@ -290,7 +290,17 @@ class _SellsState extends State<Sells> {
                                               ),
                                             );
                                             if (newSell != null) {
-                                              change(newSell);
+                                              if (newSell.runtimeType ==
+                                                  String) {
+                                                setState(() {
+                                                  _sells.removeWhere(
+                                                      (element) =>
+                                                          element.id ==
+                                                          newSell);
+                                                });
+                                              } else {
+                                                change(newSell);
+                                              }
                                             }
                                           },
                                           icon: const Icon(

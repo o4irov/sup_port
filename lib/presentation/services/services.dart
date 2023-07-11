@@ -23,6 +23,19 @@ class _ServicesState extends State<Services> {
     super.initState();
   }
 
+  void change(Service service) async {
+    final newService = Service(
+      id: service.id,
+      title: service.title,
+      price: service.price,
+    );
+    _services[_services.indexOf(
+      _services.firstWhere((element) => element.id == service.id),
+    )] = newService;
+    setState(() {});
+    await _servicesManager.changeService(service: newService);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -146,7 +159,26 @@ class _ServicesState extends State<Services> {
                         bottom: 0,
                         right: 2,
                         child: IconButton(
-                          onPressed: () {},
+                          onPressed: () async {
+                            final newService = await Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: ((context) => ServicesForm(
+                                      service: _services[idx],
+                                    )),
+                              ),
+                            );
+                            if (newService != null) {
+                              setState(() {
+                                if (newService.runtimeType == String) {
+                                  _services.removeWhere(
+                                      (element) => element.id == newService);
+                                } else {
+                                  change(newService);
+                                }
+                              });
+                            }
+                          },
                           icon: const Icon(Icons.more_horiz),
                         ),
                       ),

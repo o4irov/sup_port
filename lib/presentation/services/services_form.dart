@@ -6,7 +6,8 @@ import 'package:uuid/uuid.dart';
 import '../../domain/models/service/service.dart';
 
 class ServicesForm extends StatefulWidget {
-  const ServicesForm({super.key});
+  final Service? service;
+  const ServicesForm({super.key, this.service});
 
   @override
   State<ServicesForm> createState() => _ServicesFormState();
@@ -18,8 +19,15 @@ class _ServicesFormState extends State<ServicesForm> {
 
   final ServicesManager _servicesManager = ServicesManager();
 
+  late final bool _isChanging;
+
   @override
   void initState() {
+    _isChanging = widget.service != null;
+    if (_isChanging) {
+      _titleController.text = widget.service!.title;
+      _priceController.text = widget.service!.price.toString();
+    }
     super.initState();
   }
 
@@ -96,7 +104,9 @@ class _ServicesFormState extends State<ServicesForm> {
                     if (_titleController.text != '' &&
                         _priceController.text != '') {
                       Service service = Service(
-                        id: const Uuid().v4(),
+                        id: _isChanging
+                            ? widget.service!.id
+                            : const Uuid().v4(),
                         title: _titleController.text,
                         price: int.parse(_priceController.text),
                       );
@@ -130,13 +140,21 @@ class _ServicesFormState extends State<ServicesForm> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 GestureDetector(
-                  onTap: () {},
+                  onTap: _isChanging
+                      ? () async {
+                          _servicesManager.removeService(
+                              id: widget.service!.id);
+                          Navigator.pop(context, widget.service!.id);
+                        }
+                      : null,
                   child: Container(
                     width: 230,
                     padding: const EdgeInsets.symmetric(vertical: 17),
-                    decoration: const BoxDecoration(
-                      borderRadius: BorderRadius.all(Radius.circular(15)),
-                      color: Color.fromRGBO(222, 0, 0, 1),
+                    decoration: BoxDecoration(
+                      borderRadius: const BorderRadius.all(Radius.circular(15)),
+                      color: _isChanging
+                          ? const Color.fromRGBO(222, 0, 0, 1)
+                          : const Color.fromRGBO(222, 0, 0, 0.694),
                     ),
                     child: const Center(
                       child: Text(
