@@ -55,7 +55,7 @@ class DemoBottomAppBar extends StatelessWidget {
                               Navigator.pushAndRemoveUntil(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => const Reservation()),
+                                    builder: (context) => const Reservations()),
                                 (route) => false,
                               );
                             },
